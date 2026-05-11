@@ -3,31 +3,28 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_USER: jobsuser
-      POSTGRES_PASSWORD: can123
-      POSTGRES_DB: jobsdb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U jobsuser -d jobsdb"]
-      # pg_isready is a PostgreSQL tool that checks if the DB is accepting connections
-      interval: 5s   # check every 5 seconds
-      timeout: 5s    # wait max 5 seconds for a response
-      retries: 5     # try 5 times before giving up
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://jobsuser:can123@db/jobsdb
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
     depends_on:
       db:
         condition: service_healthy
-        # Now "depends_on" waits for the healthcheck to pass, not just container start
-        # The app only starts once PostgreSQL is confirmed ready
 
 volumes:
   postgres_data:
