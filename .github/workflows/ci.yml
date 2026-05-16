@@ -1,0 +1,35 @@
+# ci.yml — runs tests automatically on every push to GitHub
+# GitHub reads this file and executes it on their servers
+
+name: CI  # name shown on GitHub
+
+on:
+  push:
+    branches: [main]  # run on every push to main branch
+  pull_request:
+    branches: [main]  # also run on pull requests
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # GitHub spins up a fresh Ubuntu machine
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        # Downloads your code onto the GitHub machine
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+        # Installs Python 3.12 on the GitHub machine
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        # Installs all your packages from requirements.txt
+
+      - name: Run tests
+        run: pytest tests/ -v
+        # Runs your tests — if any fail, the whole workflow fails
