@@ -1,4 +1,3 @@
-cat > README.md << 'EOF'
 # Application Tracker API
 
 A FastAPI + PostgreSQL REST API for tracking job applications.
