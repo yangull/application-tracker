@@ -46,7 +46,7 @@ def test_create_application(client):
         "applied_date": "2026-05-16",
         "status": "applied"
     })
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["company"] == "Test Company"
     assert data["role"] == "Backend Engineer"

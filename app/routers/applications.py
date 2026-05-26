@@ -4,11 +4,11 @@ from sqlalchemy import func
 from typing import Optional
 from app.database import get_db
 from app.models import Application
-from app.schemas import ApplicationCreate, ApplicationUpdate, ApplicationResponse
+from app.schemas import ApplicationCreate, ApplicationUpdate, ApplicationResponse, StatsResponse
 
 router = APIRouter(prefix="/applications", tags=["applications"])
 
-@router.post("/", response_model=ApplicationResponse)
+@router.post("/", response_model=ApplicationResponse, status_code=201)
 def create_application(data: ApplicationCreate, db: Session = Depends(get_db)):
     app = Application(**data.model_dump())
     db.add(app)
@@ -23,7 +23,7 @@ def list_applications(status: Optional[str] = None, db: Session = Depends(get_db
         query = query.filter(Application.status == status)
     return query.order_by(Application.applied_date.desc()).all()
 
-@router.get("/stats")
+@router.get("/stats", response_model=StatsResponse)
 def get_stats(db: Session = Depends(get_db)):
     results = db.query(Application.status, func.count(Application.id)).group_by(Application.status).all()
     total = db.query(func.count(Application.id)).scalar()

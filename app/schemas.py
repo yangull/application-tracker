@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import date, datetime
-from typing import Optional
+from typing import Dict, Optional
 
 class ApplicationCreate(BaseModel):
     company: str
@@ -33,3 +33,7 @@ class ApplicationResponse(BaseModel):
     updated_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+class StatsResponse(BaseModel):
+    total: int
+    by_status: Dict[str, int]
